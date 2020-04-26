@@ -1,0 +1,68 @@
+﻿@using Nethereum.Metamask.Blazor.Classes;
+@page "/add_dimploma"
+<h3>AddDiploma</h3>
+
+
+<EditForm Model="@_newDiploma" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <p>
+        <label>
+            Name
+            <InputText id="name" @bind-Value=" _newDiploma.Name"  />
+        </label>
+    </p>
+    <p>
+        <label>
+            Last Name
+            <InputText id="lastName" @bind-Value="_newDiploma.LastName" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Identity number
+            <InputNumber id="identity" @bind-Value="_newDiploma.IdentityNumber" /><br />
+        </label>
+    </p>
+    <p>
+        <label>
+            Studies direction
+            <InputText id="studies_dir" @bind-Value=" _newDiploma.Studiesdirection" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Studies program
+            <InputText id="studies_program" @bind-Value="_newDiploma.SutdiesProgram" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Date of issue
+            <InputDate id="date" @bind-Value="_newDiploma.DateOfIssue" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Registration Nr.
+            <InputText id="register" @bind-Value="_newDiploma.RegistrationNr" />
+        </label>
+    </p>
+    <p>
+        <label>
+            SB_Nr
+            <InputNumber id="sb_nr" @bind-Value="_newDiploma.SB_nr" />
+        </label>
+    </p>
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+
+@code {
+    private Diploma _newDiploma = new Diploma();
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+}

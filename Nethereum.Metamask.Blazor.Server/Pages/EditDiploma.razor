@@ -1,0 +1,75 @@
+﻿@page "/EditDiploma/{CurrentID}"
+@using Nethereum.Metamask.Blazor.Server.DB_Models;
+@using  Nethereum.Metamask.Blazor.Server.DAL;
+@inject DiplomaService objDiplomaService;
+@inject NavigationManager NavigationManager
+<h2>Update Diploma</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <input for="Name" class="form-control" @bind="@objDiploma.ID" />
+            </div>
+
+            <div class="form-group">
+                <label for="Name" class="custom-control-label"></label>
+                <input form="Name" class="form-control" @bind="@objDiploma.Name" />
+            </div>
+            <div class="form-group">
+                <label for="LastName" class="custom-control-label"></label>
+                <input form="LastName" class="form-control" @bind="@objDiploma.LastName" />
+            </div>
+            <div class="form-group">
+                <label for="Identity" class="custom-control-label"></label>
+                <input form="Identity" class="form-control" @bind="@objDiploma.IdentityNumber" />
+            </div>
+            <div class="form-group">
+                <label for="Program" class="custom-control-label"></label>
+                <input form="Program" class="form-control" @bind="@objDiploma.StudiesProgram" />
+            </div>
+            <div class="form-group">
+                <label for="Direction" class="custom-control-label"></label>
+                <input form="Direction" class="form-control" @bind="@objDiploma.Studiesdirection" />
+            </div>
+            <div class="form-group">
+                <label for="Register" class="custom-control-label"></label>
+                <input form="Register" class="form-control" @bind="@objDiploma.RegistrationNr" />
+            </div>
+            <div class="form-group">
+                <label for="Date" class="custom-control-label"></label>
+                <input form="Date" class="form-control" @bind="@objDiploma.RegistrationNr" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdateDiploma" value="Update" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string CurrentID { get; set; }
+    Diploma_model objDiploma = new Diploma_model();
+
+    protected override async Task OnInitializedAsync()
+    {
+        objDiploma = await Task.Run(() => objDiplomaService.GetDiplomaByID(Convert.ToInt32(CurrentID)));
+    }
+
+    protected void UpdateDiploma()
+    {
+        objDiplomaService.UpdateDiploma(objDiploma);
+        NavigationManager.NavigateTo("Diploma");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Diploma");
+    }
+}

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nethereum.Metamask.Blazor.Server.DAL;
 
 
 namespace Nethereum.Metamask.Blazor.Server
@@ -31,6 +33,9 @@ namespace Nethereum.Metamask.Blazor.Server
             services.AddScoped<IMetamaskInterop, MetamaskBlazorInterop>();
             services.AddScoped<MetamaskService>();
             services.AddScoped<MetamaskInterceptor>();
+            services.AddScoped<DiplomaService>();
+            services.AddDbContext<VerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

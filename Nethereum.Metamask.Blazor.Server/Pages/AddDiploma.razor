@@ -1,0 +1,64 @@
+﻿@page "/AddDiploma"
+@using Nethereum.Metamask.Blazor.Server.DB_Models;
+@using  Nethereum.Metamask.Blazor.Server.DAL;
+@inject DiplomaService objDiplomaService;
+@inject NavigationManager NavigationManager
+<h2>AddDiploma</h2>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input form="Name" class="form-control" @bind="@objDiploma.Name" />
+            </div>
+            <div class="form-group">
+                <label for="LastName" class="control-label">Last Name</label>
+                <input form="LastName" class="form-control" @bind="@objDiploma.LastName" />
+            </div>
+            <div class="form-group">
+                <label for="Identity" class="control-label">Identity Number</label>
+                <input form="Identity" class="form-control" @bind="@objDiploma.IdentityNumber" />
+            </div>
+            <div class="form-group">
+                <label for="Program" class="control-label">Studies Program</label>
+                <input form="Program" class="form-control" @bind="@objDiploma.StudiesProgram" />
+            </div>
+            <div class="form-group">
+                <label for="Direction" class="control-label">Studies Direction</label>
+                <input form="Direction" class="form-control" @bind="@objDiploma.Studiesdirection" />
+            </div>
+            <div class="form-group">
+                <label for="Register" class="control-label">Registration</label>
+                <input form="Register" class="form-control" @bind="@objDiploma.RegistrationNr" />
+            </div>
+            <div class="form-group">
+                <label for="Date" class="control-label">Registration Nr</label>
+                <input form="Date" class="form-control" @bind="@objDiploma.RegistrationNr" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateDiploma" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    Diploma_model objDiploma = new Diploma_model();
+
+    protected void CreateDiploma()
+    {
+        objDiplomaService.Create(objDiploma);
+        NavigationManager.NavigateTo("Diploma");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Diploma");
+    }
+}
