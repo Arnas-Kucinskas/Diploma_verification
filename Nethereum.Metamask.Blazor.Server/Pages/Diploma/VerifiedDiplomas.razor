@@ -1,0 +1,58 @@
+﻿@page "/verified_Diplomas"
+@using Nethereum.Metamask.Blazor.Server.DB_Models;
+@using  Nethereum.Metamask.Blazor.Server.DAL;
+@using Nethereum.Metamask.Blazor.Server.Classes;
+@using System.IO;
+@inject DiplomaService objDiplomaService;
+@inject Microsoft.JSInterop.IJSRuntime JS
+
+
+<h1>Diplomas waiting for verification</h1>
+@if (objDiploma == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Diploma ID</th>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Studies Programe</th>
+                <th>Studies Direction</th>
+                <th>Hash</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dip in objDiploma)
+            {
+                <tr>
+                    <td>@dip.ID</td>
+                    <td>@dip.Name</td>
+                    <td>@dip.LastName.</td>
+                    <td>@dip.StudiesProgram</td>
+                    <td>@dip.Studiesdirection</td>
+                    <td>@dip.Hash</td>
+                    <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Update" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Diploma_model> objDiploma;
+    protected override async Task OnInitializedAsync()
+    {
+        objDiploma = await Task.Run(() => objDiplomaService.GetAllDiplomas(1));
+    }
+    protected void DownloadPDF(Diploma_model diploma)
+    {
+        PDF pdf = new PDF();
+        MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
+        JS.SaveAs("test.pdf", pdfOutput.ToArray());
+
+    }
+}

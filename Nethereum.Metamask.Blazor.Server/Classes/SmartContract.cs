@@ -7,7 +7,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 {
     public class SmartContract
     {
-		string abi = @"[
+		public string abi { get; set; } =
+		 @"[
 	{
 		'inputs': [
 			{
@@ -96,6 +97,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 		'type': 'function'
 	}
 ]";
+		public string address { get; set; } = "0x3c96A679dC4713599b4EDe9F2609770782FCc023";
+		public string functionName { get; set; } = "StoreHashes";
 
 	}
 }

@@ -22,6 +22,11 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             var emptyList = _db.Diploma.ToList();
             return emptyList;
         }
+        public List<Diploma_model> GetAllDiplomas(int status)
+        {
+            var list = _db.Diploma.Where(s => s.Status == status).ToList();
+            return list;
+        }
 
         public List<Diploma_model> GetAllDiplomasInQueue()
         {
@@ -54,6 +59,16 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
         public string UpdateDiploma(Diploma_model objDiploma)
         {
             _db.Diploma.Update(objDiploma);
+            _db.SaveChanges();
+            return "Update succesfully";
+        }
+        public string UpdateDiplomas(List<Diploma_model> objDiploma, int status)
+        {
+            foreach (var item in objDiploma)
+            {
+                item.Status = status;
+                _db.Diploma.Update(item);
+            }
             _db.SaveChanges();
             return "Update succesfully";
         }

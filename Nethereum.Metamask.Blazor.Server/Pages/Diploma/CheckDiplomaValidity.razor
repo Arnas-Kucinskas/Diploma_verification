@@ -1,0 +1,35 @@
+﻿@page "/check_diploma_validity"
+@using BlazorInputFile
+@using Nethereum.Metamask.Blazor.Server.Classes;
+
+<h1>Single file</h1>
+
+<p>A single file input that uploads automatically on file selection</p>
+
+<InputFile OnChange="HandleSelection" />
+
+<p>@status</p>
+
+@code {
+    string status;
+
+    async Task HandleSelection(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            // Just load into .NET memory to show it can be done
+            // Alternatively it could be saved to disk, or parsed in memory, or similar
+            MemoryStream ms = new MemoryStream();
+            //FileStream fs = new FileStream();
+            await file.Data.CopyToAsync(ms);
+            ms.Position = 0;
+            //await ms.CopyToAsync(fs);
+           
+            
+            PDF pdf = new PDF();
+            string hash = pdf.GetHashSha256(ms);
+            status = $"Finished loading {file.Size} bytes from {file.Name} hash {hash}";
+        }
+    }
+}
