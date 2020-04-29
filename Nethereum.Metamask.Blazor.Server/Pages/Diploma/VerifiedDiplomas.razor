@@ -1,6 +1,6 @@
 ﻿@page "/verified_Diplomas"
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
-@using  Nethereum.Metamask.Blazor.Server.DAL;
+@using Nethereum.Metamask.Blazor.Server.DAL;
 @using Nethereum.Metamask.Blazor.Server.Classes;
 @using System.IO;
 @inject DiplomaService objDiplomaService;
@@ -33,7 +33,7 @@ else
                     <td>@dip.ID</td>
                     <td>@dip.Name</td>
                     <td>@dip.LastName.</td>
-                    <td>@dip.StudiesProgram</td>
+                    <td>@dip.StudiesProgramme</td>
                     <td>@dip.Studiesdirection</td>
                     <td>@dip.Hash</td>
                     <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Update" /></td>

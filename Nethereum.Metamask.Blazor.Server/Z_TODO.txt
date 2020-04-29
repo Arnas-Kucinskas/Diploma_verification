@@ -1,0 +1,30 @@
+﻿[High]Block count checker (7+ blocks)
+[High]Page which shows if document is verified.
+
+
+[Medium] Tidy up required data
+[Medium] Full PDF createion (looks)
+
+[Low] Error handling at failed transactions
+
+
+
+
+
+_XX_Nr []
+_Name [string]
+_LastName [string]
+_Identification [int]
+_StudiesProgramme[string]
+_StudiesProgrammeGovermentCode[string]
+_Degree[string]
+_StudiesDirection[string]
+
+_RectorName
+_RectorLastName
+
+_RegistrationNr[string]
+_DateOfIssue[date]
+
+
+In image: 

@@ -1,13 +1,15 @@
 ﻿@page "/AddDiploma"
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
-@using  Nethereum.Metamask.Blazor.Server.DAL;
+@using Nethereum.Metamask.Blazor.Server.DAL;
 @inject DiplomaService objDiplomaService;
 @inject PDFService pdfService;
 @inject NavigationManager NavigationManager
 <h2>AddDiploma</h2>
 <hr />
 
-<form>
+<EditForm Model="@objDiploma" OnValidSubmit="CreateDiploma">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <div class="row">
         <div class="col-md-8">
             <div class="form-group">
@@ -24,41 +26,77 @@
             </div>
             <div class="form-group">
                 <label for="Program" class="control-label">Studies Program</label>
-                <input form="Program" class="form-control" @bind="@objDiploma.StudiesProgram" />
+                <select @bind="@objDiploma.StudiesProgramme" class="form-control">
+                    <option value="Informacinės technologijos"> Informacinės technologijos </option>
+                    <option value="Vadybos mokslas"> Vadybos mokslas </option>
+                    <option value="Leidybos programa"> Leidybos programa </option>
+                    <option value="Plovykos programa"> Plovykos programa </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="GovCode" class="control-label">Studies Programme Govermetn Code</label>
+                <input form="GovCode" class="form-control" @bind="@objDiploma.StudiesProgrammeGovermentCode" />
+            </div>
+            <div class="form-group">
+                <label for="Degree" class="control-label">Degree</label>
+                <select @bind="@objDiploma.Degree" class="form-control">
+                    <option value="Informatikos inžinerijos bakalauro"> Informatikos inžinerijos bakalauro </option>
+                    <option value="Vadybos bakaluro">Vadybos bakaluro </option>
+                    <option value="Leidybos bakalauro"> Leidybos bakalauro </option>
+                    <option value="Plovykos bakalauro"> Plovykos bakalauro </option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="Direction" class="control-label">Studies Direction</label>
-                <input form="Direction" class="form-control" @bind="@objDiploma.Studiesdirection" />
+                <select @bind="@objDiploma.Studiesdirection" class="form-control">
+                    <option value="IT inžinerija"> IT inžinerija </option>
+                    <option value="Vadyba"> Vadyba </option>
+                    <option value="Leidyba"> Leidyba </option>
+                    <option value="Plovyka"> Plovyka </option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="Register" class="control-label">Registration</label>
+                <label for="Date" class="control-label">Date Of Issue</label>
+                <InputDate id="date" @bind-Value="objDiploma.DateOfIssue" />
+
+            </div>
+            <div class="form-group">
+                <label for="Register" class="control-label">Registration Nr</label>
                 <input form="Register" class="form-control" @bind="@objDiploma.RegistrationNr" />
             </div>
             <div class="form-group">
-                <label for="Date" class="control-label">Registration Nr</label>
-                <input form="Date" class="form-control" @bind="@objDiploma.RegistrationNr" />
+                <label for="RectorName" class="control-label">Rectors Name</label>
+                <input form="RectorName" class="form-control" @bind="@objDiploma.RectorsName" />
+            </div>
+            <div class="form-group">
+                <label for="RectorLastName" class="control-label">Rectors Last ame</label>
+                <input form="RectorLastName" class="form-control" @bind="@objDiploma.RectorsLastName" />
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <input type="button" class="btn btn-primary" @onclick="@CreateDiploma" value="Save" />
+                <button type="submit" class="btn btn-primary">Save</button>
                 <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
             </div>
         </div>
     </div>
-</form>
+</EditForm>
+    <form>
 
-@code {
-    Diploma_model objDiploma = new Diploma_model();
-    protected void CreateDiploma()
-    {
-        objDiplomaService.Create(objDiploma);
-        NavigationManager.NavigateTo("Diploma");
+    </form>
+
+    @code {
+
+        Diploma_model objDiploma = new Diploma_model();
+        protected void CreateDiploma()
+        {
+            objDiplomaService.Create(objDiploma);
+            NavigationManager.NavigateTo("Diploma");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("Diploma");
+        }
     }
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("Diploma");
-    }
-}

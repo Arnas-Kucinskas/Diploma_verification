@@ -1,6 +1,6 @@
 ﻿@page "/diploma"
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
-@using  Nethereum.Metamask.Blazor.Server.DAL;
+@using Nethereum.Metamask.Blazor.Server.DAL;
 @inject DiplomaService objDiplomaService;
 @inject IJSRuntime jsRuntime;
 @inject MetamaskService metamaskService;
@@ -48,7 +48,7 @@ else
 					<td>@dip.ID</td>
 					<td>@dip.Name</td>
 					<td>@dip.LastName.</td>
-					<td>@dip.StudiesProgram</td>
+					<td>@dip.StudiesProgramme</td>
 					<td>@dip.Studiesdirection</td>
 					<td>@dip.Hash</td>
 					<td>
@@ -110,8 +110,7 @@ else
             {
                 //???
             }
-            
-            objDiplomaService.UpdateDiplomas(objDiploma, 1);
+            objDiplomaService.UpdateDiplomas(objDiploma, 1, result);
             await OnInitializedAsync();
         }
         catch (Exception ex)

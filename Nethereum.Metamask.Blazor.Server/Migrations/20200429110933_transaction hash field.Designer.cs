@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nethereum.Metamask.Blazor.Server.DAL;
 
 namespace Nethereum.Metamask.Blazor.Server.Migrations
 {
     [DbContext(typeof(VerContext))]
-    partial class VerContextModelSnapshot : ModelSnapshot
+    [Migration("20200429110933_transaction hash field")]
+    partial class transactionhashfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,27 +31,16 @@ namespace Nethereum.Metamask.Blazor.Server.Migrations
                     b.Property<DateTime>("DateOfIssue")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Degree")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Hash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IdentityNumber")
+                    b.Property<int?>("IdentityNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<string>("RectorsLastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RectorsName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RegistrationNr")
@@ -61,10 +52,7 @@ namespace Nethereum.Metamask.Blazor.Server.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("StudiesProgramme")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StudiesProgrammeGovermentCode")
+                    b.Property<string>("StudiesProgram")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Studiesdirection")

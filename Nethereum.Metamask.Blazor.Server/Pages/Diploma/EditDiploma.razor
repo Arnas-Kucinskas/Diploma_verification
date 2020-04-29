@@ -1,6 +1,6 @@
 ﻿@page "/EditDiploma/{CurrentID}"
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
-@using  Nethereum.Metamask.Blazor.Server.DAL;
+@using Nethereum.Metamask.Blazor.Server.DAL;
 @inject DiplomaService objDiplomaService;
 @inject NavigationManager NavigationManager
 <h2>Update Diploma</h2>
@@ -27,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label for="Program" class="custom-control-label"></label>
-                <input form="Program" class="form-control" @bind="@objDiploma.StudiesProgram" />
+                <input form="Program" class="form-control" @bind="@objDiploma.StudiesProgramme" />
             </div>
             <div class="form-group">
                 <label for="Direction" class="custom-control-label"></label>

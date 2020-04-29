@@ -1,6 +1,9 @@
 ﻿@page "/check_diploma_validity"
 @using BlazorInputFile
 @using Nethereum.Metamask.Blazor.Server.Classes;
+@using Nethereum.Metamask.Blazor.Server.DB_Models;
+@using Nethereum.Metamask.Blazor.Server.DAL;
+@inject DiplomaService objDiplomaService;
 
 <h1>Single file</h1>
 
@@ -9,9 +12,11 @@
 <InputFile OnChange="HandleSelection" />
 
 <p>@status</p>
+<p>@linkToExplorer</p>
 
 @code {
     string status;
+    string linkToExplorer;
 
     async Task HandleSelection(IFileListEntry[] files)
     {
@@ -21,14 +26,21 @@
             // Just load into .NET memory to show it can be done
             // Alternatively it could be saved to disk, or parsed in memory, or similar
             MemoryStream ms = new MemoryStream();
-            //FileStream fs = new FileStream();
             await file.Data.CopyToAsync(ms);
             ms.Position = 0;
-            //await ms.CopyToAsync(fs);
-           
-            
             PDF pdf = new PDF();
             string hash = pdf.GetHashSha256(ms);
+
+            //Get diploma based on hash
+            Diploma_model diploma = objDiplomaService.GetDiplomaByHash(hash);
+            if (diploma != null)
+            {
+                linkToExplorer = $"Document is verified \n Link to transaction: https://ropsten.etherscan.io/tx/{diploma.transactionHash}";
+            }
+            else
+            {
+                linkToExplorer = $"Document is not verified";
+            }
             status = $"Finished loading {file.Size} bytes from {file.Name} hash {hash}";
         }
     }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nethereum.Metamask.Blazor.Server.DAL;
 
 namespace Nethereum.Metamask.Blazor.Server.Migrations
 {
     [DbContext(typeof(VerContext))]
-    partial class VerContextModelSnapshot : ModelSnapshot
+    [Migration("20200429122638_more or less complete diploma data")]
+    partial class moreorlesscompletediplomadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +44,7 @@ namespace Nethereum.Metamask.Blazor.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RectorsLastName")
                         .HasColumnType("nvarchar(max)");
