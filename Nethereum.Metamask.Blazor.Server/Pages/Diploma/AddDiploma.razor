@@ -2,6 +2,7 @@
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
 @using  Nethereum.Metamask.Blazor.Server.DAL;
 @inject DiplomaService objDiplomaService;
+@inject PDFService pdfService;
 @inject NavigationManager NavigationManager
 <h2>AddDiploma</h2>
 <hr />
@@ -51,7 +52,6 @@
 
 @code {
     Diploma_model objDiploma = new Diploma_model();
-
     protected void CreateDiploma()
     {
         objDiplomaService.Create(objDiploma);

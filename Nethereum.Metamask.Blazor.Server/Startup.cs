@@ -34,6 +34,7 @@ namespace Nethereum.Metamask.Blazor.Server
             services.AddScoped<MetamaskService>();
             services.AddScoped<MetamaskInterceptor>();
             services.AddScoped<DiplomaService>();
+            services.AddScoped<PDFService>();
             services.AddDbContext<VerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         }

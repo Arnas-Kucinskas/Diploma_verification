@@ -9,7 +9,7 @@ namespace Nethereum.Metamask.Blazor.Server.DB_Models
     public class Diploma_model
     {
         [Key]
-        public System.Nullable<int> ID { get; set; }
+        public int ID { get; set; }
         public System.Nullable<int> SB_nr { get; set; } 
         public string Name { get; set; } 
         public string LastName { get; set; } 

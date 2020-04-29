@@ -4,6 +4,7 @@
 @using Nethereum.Metamask.Blazor.Server.Classes;
 @using System.IO;
 @inject DiplomaService objDiplomaService;
+@inject PDFService pdfService;
 @inject Microsoft.JSInterop.IJSRuntime JS
 
 
@@ -51,7 +52,10 @@ else
     protected void DownloadPDF(Diploma_model diploma)
     {
         PDF pdf = new PDF();
-        MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
+        //download pdf
+        //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
+        //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
+        MemoryStream pdfOutput = pdfService.GetPDF(diploma);
         JS.SaveAs("test.pdf", pdfOutput.ToArray());
 
     }

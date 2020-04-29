@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Nethereum.Metamask.Blazor.Server.DB_Models;
 using Nethereum.Metamask.Blazor.Server.Classes;
+using System.IO;
 
 namespace Nethereum.Metamask.Blazor.Server.DAL
 {
@@ -41,11 +42,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
 
             //Create PDF and get its hash
             PDF pdf = new PDF();
-            string hash = pdf.CreatePDF(objDimploma);
-            objDimploma.Hash = hash;
+            Tuple<string, String> diplomaInfo = pdf.CreatePDF(objDimploma);
+            objDimploma.Hash = diplomaInfo.Item1;
+            PdfInfo pdfInfo = new PdfInfo();
+            pdfInfo.diploma = objDimploma;
+            pdfInfo.pdfBase64Code = diplomaInfo.Item2;
             //Check forduplicates
             //
             _db.Diploma.Add(objDimploma);
+            _db.pdfInfos.Add(pdfInfo);
             _db.SaveChanges();
             return "Save Successfully";
         }

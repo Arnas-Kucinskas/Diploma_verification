@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nethereum.Metamask.Blazor.Server.DAL;
 
 namespace Nethereum.Metamask.Blazor.Server.Migrations
 {
     [DbContext(typeof(VerContext))]
-    partial class VerContextModelSnapshot : ModelSnapshot
+    [Migration("20200429084353_pdf base64 storage")]
+    partial class pdfbase64storage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

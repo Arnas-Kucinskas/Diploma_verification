@@ -47,6 +47,7 @@
         objDiploma = await Task.Run(() => objDiplomaService.GetDiplomaByID(Convert.ToInt32(CurrentID)));
     }
 
+    
     protected void DelDiploma()
     {
         objDiplomaService.DeleteDiploma(objDiploma);
