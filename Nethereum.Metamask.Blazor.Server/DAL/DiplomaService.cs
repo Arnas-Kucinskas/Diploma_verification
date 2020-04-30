@@ -71,11 +71,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             return diploma;
         }
 
-        public string UpdateDiploma(Diploma_model objDiploma)
+        public String UpdateDiploma(Diploma_model objDiploma)
         {
+            PDF pdf = new PDF();
+            Tuple<string, String> diplomaInfo = pdf.CreatePDF(objDiploma);
+            objDiploma.Hash = diplomaInfo.Item1;
+
             _db.Diploma.Update(objDiploma);
             _db.SaveChanges();
-            return "Update succesfully";
+            return diplomaInfo.Item2;
         }
         public string UpdateDiplomas(List<Diploma_model> objDiploma, int status, string _transactionHash)
         {

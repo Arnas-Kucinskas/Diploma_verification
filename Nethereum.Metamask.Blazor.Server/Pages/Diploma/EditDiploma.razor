@@ -2,6 +2,7 @@
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
 @using Nethereum.Metamask.Blazor.Server.DAL;
 @inject DiplomaService objDiplomaService;
+@inject PDFService objPdfService;
 @inject NavigationManager NavigationManager
 <h2>Update Diploma</h2>
 <hr />
@@ -65,7 +66,8 @@
 
     protected void UpdateDiploma()
     {
-        objDiplomaService.UpdateDiploma(objDiploma);
+        String updatedPdf = objDiplomaService.UpdateDiploma(objDiploma);
+        objPdfService.UpdatePDF(objDiploma,updatedPdf);
         NavigationManager.NavigateTo("Diploma");
     }
     void Cancel()

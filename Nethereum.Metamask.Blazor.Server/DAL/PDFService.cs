@@ -18,7 +18,8 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             _db = db;
         }
 
-        public MemoryStream GetPDF(Diploma_model diploma)
+
+        public MemoryStream GetPDFForDownload(Diploma_model diploma)
         {
             PdfInfo pdfinfo = _db.pdfInfos.FirstOrDefault(s => s.diplomaID == diploma.ID);
             byte[] pdfbytes = Convert.FromBase64String(pdfinfo.pdfBase64Code);
@@ -26,6 +27,13 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             return stream;
         }
 
+        public string UpdatePDF(Diploma_model diploma, String updatedPDF)
+        {
+            PdfInfo pdfinfo = _db.pdfInfos.FirstOrDefault(s => s.diplomaID == diploma.ID);
+            pdfinfo.pdfBase64Code = updatedPDF;
+            _db.pdfInfos.Update(pdfinfo);
+            return "Save successfull";
+        }
         public Diploma_model GetDiplomaByID(int id)
         {
             Diploma_model diploma = _db.Diploma.FirstOrDefault(s => s.ID == id);

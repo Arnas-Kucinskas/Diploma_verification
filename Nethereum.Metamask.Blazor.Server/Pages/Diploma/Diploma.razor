@@ -13,63 +13,101 @@
 @using Nethereum.Web3.Accounts;
 
 <NavLink class="nav-link" href="AddDiploma">
-	<span class="oi oi-plus" aria-hidden="true"></span> Add New
+    <span class="oi oi-plus" aria-hidden="true"></span> Add New
 </NavLink>
 <div class="row">
-	<div class="col-md-4">
-		<div class="form-group">
-			<input type="button" class="btn btn-primary" @onclick="@VerifyDoccuments" value="Verify Doccuments" />
-		</div>
-	</div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-primary" @onclick="@VerifyDoccuments" value="Verify Doccuments" />
+            <input type="button" class="btn btn-primary" @onclick="@ImportDocuments" value="Import" />
+        </div>
+    </div>
 </div>
 
 <h1>Diplomas waiting for verification</h1>
 @if (objDiploma == null)
 {
-	<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Diploma ID</th>
-				<th>Name</th>
-				<th>Last Name</th>
-				<th>Studies Programe</th>
-				<th>Studies Direction</th>
-				<th>Hash</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var dip in objDiploma)
-			{
-				<tr>
-					<td>@dip.ID</td>
-					<td>@dip.Name</td>
-					<td>@dip.LastName.</td>
-					<td>@dip.StudiesProgramme</td>
-					<td>@dip.Studiesdirection</td>
-					<td>@dip.Hash</td>
-					<td>
-						<a class="nav-link" href="EditDiploma/@dip.ID">
-							<span class="oi oi-pencil" aria-hidden="true"></span> Edit
-						</a>
-						<a class="nav-link" href="DeleteDiploma/@dip.ID">
-							<span class="oi oi-pencil" aria-hidden="true"></span> Delete
-						</a>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Diploma ID</th>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Studies Programe</th>
+                <th>Studies Direction</th>
+                <th>Hash</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dip in objDiploma)
+            {
+                <tr>
+                    <td>@dip.ID</td>
+                    <td>@dip.Name</td>
+                    <td>@dip.LastName.</td>
+                    <td>@dip.StudiesProgramme</td>
+                    <td>@dip.Studiesdirection</td>
+                    <td>@dip.Hash</td>
+                    <td>
+                        <a class="nav-link" href="EditDiploma/@dip.ID">
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
+                        </a>
+                        <a class="nav-link" href="DeleteDiploma/@dip.ID">
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="button" class="btn btn-danger" @onclick="@DeleteAllDiplomas" value="Delete all diplomas" />
 }
 
 @code {
     List<Diploma_model> objDiploma;
+
     protected override async Task OnInitializedAsync()
     {
         objDiploma = await Task.Run(() => objDiplomaService.GetAllDiplomasInQueue());
+    }
+
+    protected async Task ImportDocuments()
+    {
+        var ImportedObj = File.ReadAllLines("D:\\pdf\\import.csv").Skip(1);
+        List<Diploma_model> importedDiplomas = new List<Diploma_model>();
+        foreach (var item in ImportedObj)
+        {
+            string[] values = item.Split(',');
+            Diploma_model diploma = new Diploma_model();
+            diploma.Name = values[0];
+            diploma.LastName = values[1];
+            diploma.IdentityNumber = Convert.ToInt64(values[2]);
+            diploma.StudiesProgramme = values[3];
+            diploma.StudiesProgrammeGovermentCode = values[4];
+            diploma.Degree = values[5];
+            diploma.Studiesdirection = values[6];
+            diploma.RegistrationNr = values[7];
+            diploma.DateOfIssue = Convert.ToDateTime(values[8]);
+            importedDiplomas.Add(diploma);
+
+        }
+        foreach (var item in importedDiplomas)
+        {
+            objDiplomaService.Create(item);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task DeleteAllDiplomas()
+    {
+        foreach (var item in objDiploma)
+        {
+            objDiplomaService.DeleteDiploma(item);
+        }
+        await OnInitializedAsync();
     }
     protected async Task VerifyDoccuments()
     {

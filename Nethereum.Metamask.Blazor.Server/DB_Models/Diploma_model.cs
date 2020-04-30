@@ -14,7 +14,7 @@ namespace Nethereum.Metamask.Blazor.Server.DB_Models
         [StringLength(20, ErrorMessage = "Name is too long.")]
         public string Name { get; set; }
         public string LastName { get; set; }
-        public int IdentityNumber { get; set; }
+        public long IdentityNumber { get; set; }
         public string StudiesProgramme { get; set; }
         public string StudiesProgrammeGovermentCode { get; set; } = "GN-00001";
         public string Degree { get; set; }

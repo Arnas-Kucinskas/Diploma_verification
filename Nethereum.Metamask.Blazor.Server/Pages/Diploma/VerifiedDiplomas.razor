@@ -36,11 +36,12 @@ else
                     <td>@dip.StudiesProgramme</td>
                     <td>@dip.Studiesdirection</td>
                     <td>@dip.Hash</td>
-                    <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Update" /></td>
+                    <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Download PDF" /></td>
                 </tr>
             }
         </tbody>
     </table>
+    <input type="button" class="btn btn-danger" @onclick="@DeleteAllDiplomas" value="Delete all diplomas" />
 }
 
 @code {
@@ -49,14 +50,19 @@ else
     {
         objDiploma = await Task.Run(() => objDiplomaService.GetAllDiplomas(1));
     }
+    protected async Task DeleteAllDiplomas()
+    {
+        foreach (var item in objDiploma)
+        {
+            objDiplomaService.DeleteDiploma(item);
+        }
+        await OnInitializedAsync();
+    }
     protected void DownloadPDF(Diploma_model diploma)
     {
         PDF pdf = new PDF();
         //download pdf
-        //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
-        //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
-        MemoryStream pdfOutput = pdfService.GetPDF(diploma);
+        MemoryStream pdfOutput = pdfService.GetPDFForDownload(diploma);
         JS.SaveAs("test.pdf", pdfOutput.ToArray());
-
     }
 }

@@ -98,6 +98,7 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             table.SetHorizontalAlignment(HorizontalAlignment.RIGHT);
             //table.AddCell(new Cell("Išdavimo data:").SetTextAlignment(TextAlignment.LEFT)).AddStyle(style);
             //https://itextpdf.com/en/resources/faq/technical-support/itext-7/why-doesnt-getdefaultcellsetborderpdfpcellnoborder-have-any
+            //https://kodejava.org/how-do-i-create-table-cell-that-span-multiple-columns-in-itext/
             table.AddCell(new Paragraph("Registracijos Nr").SetTextAlignment(TextAlignment.LEFT));
             table.AddCell(new Paragraph($"{diploma.RegistrationNr}").SetTextAlignment(TextAlignment.LEFT));
             table.AddCell(new Paragraph("Registracijos Nr").SetTextAlignment(TextAlignment.LEFT));
