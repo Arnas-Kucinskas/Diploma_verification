@@ -128,9 +128,9 @@ else
         {
             var web3 = new Nethereum.Web3.Web3();
             web3.Client.OverridingRequestInterceptor = metamaskInterceptor;
+            web3.TransactionManager.DefaultGas = 1000000;
             //TO DO
             //create a function to check how much GAS is required.
-            web3.TransactionManager.DefaultGas = 1000000;
             SmartContract smartContract = new SmartContract();
 
 
@@ -142,6 +142,11 @@ else
             }
             //TO DO
             //add logic when transaction fails
+            //HexBigInteger st = new HexBigInteger(10000000);
+            //HexBigInteger nd = new HexBigInteger(10000000);
+            //var esimatedGas = await function.EstimateGasAsync(selectedAccount, st, nd,  hashesList);
+            //var esimatedGas = await web3.TransactionManager.EstimateGasAsync(function, hashesList);
+
             var result = await function.SendTransactionAsync(selectedAccount, hashesList);
 
             if (result == null)

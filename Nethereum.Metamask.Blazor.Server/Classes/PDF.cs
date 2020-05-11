@@ -26,7 +26,7 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
         private string documentHash;
         private static string pdfDestination = "D:\\pdf\\{0}.pdf";
         private static string pdfShare = "\\\\DESKTOP-6QJ1MGC\\Share\\PDF\\{0}.pdf";
-        private string imageDestination = "D:\\pdf\\diploma.png";
+        private string imageDestination = "D:\\pdf\\diploma.jpg";
         private SHA256 Sha256 = SHA256.Create();
 
         public PDF(int hash)
@@ -52,8 +52,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             var writer = new PdfWriter(stream);
             var pdf = new PdfDocument(writer);
             //Fonts
-            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN);
-            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD);
+            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, "Cp1250", true);
+            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD, "Cp1250", true);
             //Text Generic
             Text rector = new Text($"{diploma.RectorsName} {diploma.RectorsLastName} \nRektorius \nRector").SetFont(times_new_roman);
             Text dateofissueLT = new Text($"Išdavimo data:           {diploma.DateOfIssue.ToString("yyyy/MM/dd")}").SetFont(times_new_roman);

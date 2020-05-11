@@ -24,10 +24,11 @@ namespace Nethereum.Metamask.Blazor.Server.DB_Models
         public string RegistrationNr { get; set; } = "GN-RNR0001";
         public DateTime DateOfIssue { get; set; } = DateTime.Now;
         public System.Nullable<int> SB_nr { get; set; } = 000001;
+        public System.Nullable<int> ComfirmationCount { get; set; }
+        public string quickSearch { get; set; }
 
 
 
- 
 
 
         public string Hash { get; set; }

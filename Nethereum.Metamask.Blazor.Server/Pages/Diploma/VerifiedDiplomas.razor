@@ -38,15 +38,20 @@ else
                 <td>@dip.Studiesdirection</td>
                 <td>@dip.Hash</td>
 
-                @if (@dip.Status < 12)
+                @if (@dip.ComfirmationCount == -1)
                 {
-                    <td>@dip.Status / 12</td>
+                    <td>Pending</td>
+                }
+                else if (@dip.ComfirmationCount < 12)
+                {
+                    <td>@dip.ComfirmationCount / 12</td>
                 }
                 else
                 {
-                    <td>Verfieid</td>
+                    <td>
+                        <span style="color:green"><b>✔</b></span> Verified
+                    </td>
                 }
-                
                 <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Download PDF" /></td>
             </tr>
             }
@@ -88,7 +93,7 @@ else
             {
                 if (diploma.transactionHash == txn.Key)
                 {
-                    diploma.Status = (int)txn.Value;
+                    diploma.ComfirmationCount = (int)txn.Value;
                     tmpObjDiploma.Add(diploma);
                 }
             }
@@ -131,6 +136,7 @@ else
         PDF pdf = new PDF();
         //download pdf
         MemoryStream pdfOutput = pdfService.GetPDFForDownload(diploma);
-        JS.SaveAs("test.pdf", pdfOutput.ToArray());
+        string fileName = diploma.Name + "_" + diploma.LastName + "_" + diploma.SB_nr + ".pdf";
+        JS.SaveAs(fileName, pdfOutput.ToArray());
     }
 }

@@ -24,6 +24,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using System.Timers;
 using Nethereum.Contracts;
 using System.Linq;
+using Nethereum.Metamask.Blazor.Server.DB_Models;
 
 namespace Nethereum.Metamask.Blazor.Server.Classes
 {
@@ -33,6 +34,33 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 
         public EthereumLib()
         {
+
+        }
+
+        public async Task<Tuple<bool, DateTime>> DoesHashExistInTxn(Diploma_model diploma)
+        {
+            try
+            {
+                var web3 = new Web3.Web3(infuraURL);
+                var result = await web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(diploma.transactionHash);
+                var result2 = await web3.Eth.Blocks.GetBlockWithTransactionsByNumber.SendRequestAsync( result.BlockNumber);
+                DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                dtDateTime = dtDateTime.AddSeconds((long)result2.Timestamp.Value).ToLocalTime();
+                if (result.Input.Contains(diploma.Hash))
+                {
+                    
+                    return new Tuple<bool, DateTime>(true, dtDateTime);
+                }
+                else
+                {
+                    return new Tuple<bool, DateTime>(false, DateTime.Now);
+                }
+            }
+            catch (Exception)
+            {
+                // does not exist
+                return new Tuple<bool, DateTime>(false, DateTime.Now);
+            }
 
         }
 
@@ -46,6 +74,11 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
                 var transaction = await web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(item.Key);
                 var latestBlockNumber = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
                 long confirmations = (long)(latestBlockNumber.Value - transaction.BlockNumber);
+
+                if(transaction.BlockNumber.Value <= 0)
+                {
+                    confirmations = -1;
+                }
                 tmpTxnDict.Add(item.Key, confirmations);
             }
             return tmpTxnDict;

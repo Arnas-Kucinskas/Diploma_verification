@@ -26,21 +26,66 @@
     </thead>
 </table>
 
-@if (status != null)
+@if (status != 0)
 {
-    <a>Doccument hash: @hash</a>
-    <a class="nav-link" href="@linkToExplorer">
-        <span class="oi oi-pencil" aria-hidden="true"></span> @linkToExplorer
-    </a>
+    @if (status == 1)
+    {
+        <a>Loading...</a>
+    }
+    else
+    {
+        @if (hashExists)
+        {<table>
+                <tbody>
+                    <tr>
+                        <td><b>Diploma status:</b></td>
+                        <td>
+                            <span style="color:green"><b>✔</b></span> Verified
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Date of verification:</b></td>
+                        <td>
+                            <span style="color:green"><b>✔</b></span> @verificationDate.ToString("   yyyy-MM-dd HH:mm");
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Link to transaction:</b></td>
+                        <td>
+                            <a class="nav-link" href="@linkToExplorer">@linkToExplorer</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td><b>Diploma status:</b></td>
+                        <td>
+                            <span style="color:red"><b>✗</b></span> Not Verified
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+
 }
 
 
 @code {
-    string status;
+    int status = 0;
     string linkToExplorer;
     string diplomaUserID;
     string verificationText;
     string hash;
+    bool hashExists = false;
+    //int blockConfirmations;
+    DateTime verificationDate;
 
     async Task SearchWithID()
     {
@@ -48,6 +93,7 @@
     }
     async Task HandleSelection(IFileListEntry[] files)
     {
+        status = 1;
         var file = files.FirstOrDefault();
         if (file != null)
         {
@@ -63,16 +109,31 @@
             Diploma_model diploma = objDiplomaService.GetDiplomaByHash(hash);
             if (diploma != null)
             {
-                verificationText = "Document is verified. Link to transaction:";
-                linkToExplorer = $"https://ropsten.etherscan.io/tx/{diploma.transactionHash}";
+                EthereumLib ethereumLib = new EthereumLib();
+                Tuple<bool, DateTime> txnExistnanceAndTimecheck = await ethereumLib.DoesHashExistInTxn(diploma);
+                hashExists = txnExistnanceAndTimecheck.Item1;
+                if (txnExistnanceAndTimecheck.Item1)
+                {
+                    verificationText = "Document is verified. Link to transaction:";
+                    linkToExplorer = $"https://ropsten.etherscan.io/tx/{diploma.transactionHash}";
+                    verificationDate = txnExistnanceAndTimecheck.Item2;
+                    //blockConfirmations = diploma.ComfirmationCount;
+                }
+                else
+                {
+                    verificationText = "Document is not verified";
+                }
+
+
                 //linkToExplorer = "file:\\\\DESKTOP-6QJ1MGC\\Share\\PDF";
 
             }
             else
             {
+                hashExists = false;
                 verificationText = "Document is not verified";
             }
-            status = $"Finished loading {file.Size} bytes from {file.Name} hash {hash}";
+            status = 2;
         }
     }
 }

@@ -57,14 +57,39 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             PdfInfo pdfInfo = new PdfInfo();
             pdfInfo.diploma = objDimploma;
             pdfInfo.pdfBase64Code = diplomaInfo.Item2;
+            bool notUniqueQuickSearch = true;
+            while (notUniqueQuickSearch)
+            {
+                string quickSearch = GetRandom(10);
+                Diploma_model tmpDiploma = _db.Diploma.FirstOrDefault(s => s.quickSearch == quickSearch);
+                if (tmpDiploma == null)
+                {
+                    notUniqueQuickSearch = false;
+                }
+                objDimploma.quickSearch = quickSearch;
+            }
             //Check forduplicates
             //
             _db.Diploma.Add(objDimploma);
+            _db.SaveChanges();
             _db.pdfInfos.Add(pdfInfo);
             _db.SaveChanges();
             return "Save Successfully";
         }
 
+        private string GetRandom(int length)
+        {
+            const string chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM123456789";
+            var stringChars = new char[length];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new String(stringChars);
+        }
         public Diploma_model GetDiplomaByID(int id)
         {
             Diploma_model diploma = _db.Diploma.FirstOrDefault(s => s.ID == id);

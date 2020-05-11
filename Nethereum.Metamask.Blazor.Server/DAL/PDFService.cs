@@ -40,11 +40,7 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             return pdfInfo;
         }
 
-        public Diploma_model GetDiplomaByID(int id)
-        {
-            Diploma_model diploma = _db.Diploma.FirstOrDefault(s => s.ID == id);
-            return diploma;
-        }
+
         public string AddPDF(PdfInfo pdf)
         {
             _db.pdfInfos.Add(pdf);
