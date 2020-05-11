@@ -25,6 +25,7 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
         //private SHA256 documentHash = SHA256.Create();
         private string documentHash;
         private static string pdfDestination = "D:\\pdf\\{0}.pdf";
+        private static string pdfShare = "\\\\DESKTOP-6QJ1MGC\\Share\\PDF\\{0}.pdf";
         private string imageDestination = "D:\\pdf\\diploma.png";
         private SHA256 Sha256 = SHA256.Create();
 
@@ -36,6 +37,13 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
         public PDF()
         {
 
+        }
+
+        public MemoryStream createMemeoryStream(String byteCode)
+        {
+            byte[] pdfbytes = Convert.FromBase64String(byteCode);
+            MemoryStream stream = new MemoryStream(pdfbytes);
+            return stream;
         }
 
         public MemoryStream GeneratePDF(Diploma_model diploma)
@@ -127,7 +135,7 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 
         }
 
-        public void SavePDFToDisk(MemoryStream contents)
+        public void SavePDFToDisk(MemoryStream contents, string fileName)
         {
             //Creates file. Required only for Debug purposes
             var bytes = new byte[16];
@@ -135,8 +143,10 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             {
                 rng.GetBytes(bytes);
             }
-            string randomString = BitConverter.ToString(bytes);
-            pdfDestination = String.Format(pdfDestination, randomString);
+            //string randomString = BitConverter.ToString(bytes);
+            //string stringName = BitConverter.ToString(bytes);
+
+            pdfDestination = String.Format(pdfShare, fileName);
             using (FileStream fs = new FileStream(pdfDestination, FileMode.OpenOrCreate))
             {
                 contents.WriteTo(fs);

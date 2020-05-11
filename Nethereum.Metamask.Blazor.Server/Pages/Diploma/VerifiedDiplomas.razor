@@ -24,32 +24,80 @@ else
                 <th>Studies Programe</th>
                 <th>Studies Direction</th>
                 <th>Hash</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var dip in objDiploma)
             {
-                <tr>
-                    <td>@dip.ID</td>
-                    <td>@dip.Name</td>
-                    <td>@dip.LastName.</td>
-                    <td>@dip.StudiesProgramme</td>
-                    <td>@dip.Studiesdirection</td>
-                    <td>@dip.Hash</td>
-                    <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Download PDF" /></td>
-                </tr>
+            <tr>
+                <td>@dip.ID</td>
+                <td>@dip.Name</td>
+                <td>@dip.LastName.</td>
+                <td>@dip.StudiesProgramme</td>
+                <td>@dip.Studiesdirection</td>
+                <td>@dip.Hash</td>
+
+                @if (@dip.Status < 12)
+                {
+                    <td>@dip.Status / 12</td>
+                }
+                else
+                {
+                    <td>Verfieid</td>
+                }
+                
+                <td><input type="button" class="btn btn-primary" @onclick="@(e => DownloadPDF(dip))" value="Download PDF" /></td>
+            </tr>
             }
         </tbody>
     </table>
     <input type="button" class="btn btn-danger" @onclick="@DeleteAllDiplomas" value="Delete all diplomas" />
+    <input type="button" class="btn btn-primary" @onclick="@OpenShare" value="Create all in share" />
 }
 
 @code {
     List<Diploma_model> objDiploma;
+
     protected override async Task OnInitializedAsync()
     {
         objDiploma = await Task.Run(() => objDiplomaService.GetAllDiplomas(1));
+        await CheckStatuses();
+
+
     }
+
+
+    protected async Task CheckStatuses()
+    {
+        //List<string> txnList = new List<string>();
+        Dictionary<string, long> txndict = new Dictionary<string, long>();
+        EthereumLib ethlib = new EthereumLib();
+        foreach (var item in objDiploma)
+        {
+            if (!txndict.ContainsKey(item.transactionHash))
+            {
+                txndict.Add(item.transactionHash, 0);
+            }
+        }
+        txndict = await ethlib.GetConfirmations(txndict);
+        List<Diploma_model> tmpObjDiploma = new List<Diploma_model>();
+        foreach (var diploma in objDiploma)
+        {
+            foreach (var txn in txndict)
+            {
+                if (diploma.transactionHash == txn.Key)
+                {
+                    diploma.Status = (int)txn.Value;
+                    tmpObjDiploma.Add(diploma);
+                }
+            }
+        }
+        objDiploma = tmpObjDiploma;
+        //Check for break
+
+    }
+
     protected async Task DeleteAllDiplomas()
     {
         foreach (var item in objDiploma)
@@ -57,6 +105,26 @@ else
             objDiplomaService.DeleteDiploma(item);
         }
         await OnInitializedAsync();
+    }
+    protected async Task OpenShare()
+    {
+        PDF pdf = new PDF();
+        List<MemoryStream> msList = new List<MemoryStream>();
+
+        List<Tuple<MemoryStream, string>> tupleList = new List<Tuple<MemoryStream, string>>();
+
+        foreach (var item in objDiploma)
+        {
+            PdfInfo obj = pdfService.GetPDFByDiplomaID(item);
+            MemoryStream ms = await Task.Run(() => pdf.createMemeoryStream(obj.pdfBase64Code));
+            string fileName = item.Name + "_" + item.LastName + "_" + item.SB_nr;
+            tupleList.Add(new Tuple<MemoryStream, string>(ms, fileName));
+        }
+        foreach (var item in tupleList)
+        {
+            await Task.Run(() => pdf.SavePDFToDisk(item.Item1, item.Item2));
+        }
+        // Tuple<string, String> diplomaInfo =  new Tuple<string, String>(documentHash, Convert.ToBase64String(streamArray));
     }
     protected void DownloadPDF(Diploma_model diploma)
     {
