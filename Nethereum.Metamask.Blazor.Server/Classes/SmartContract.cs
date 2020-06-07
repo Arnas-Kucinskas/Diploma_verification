@@ -98,6 +98,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 	}
 ]";
 		public string address { get; set; } = "0x3c96A679dC4713599b4EDe9F2609770782FCc023";
+		//public string address { get; set; } = "0x9E6bd5A4C2453b7dE7642E198bC7C8c3Cc99E300";
+
 		public string functionName { get; set; } = "StoreHashes";
 		public string infuraURL { get; set; } = "https://ropsten.infura.io/v3/75230d7a7f1547fcbb12f3707a6bbe44";
 

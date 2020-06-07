@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using Nethereum.Metamask.Blazor.Server.DB_Models;
 using System.IO;
 using iText.Layout.Borders;
+using System.Text;
 
 namespace Nethereum.Metamask.Blazor.Server.Classes
 {
@@ -48,12 +49,27 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
 
         public MemoryStream GeneratePDF(Diploma_model diploma)
         {
+            /*byte[] bytes = new byte[diploma.Name.Length * sizeof(char)];
+            System.Buffer.BlockCopy(diploma.Name.ToArray(), 0, bytes, 0, bytes.Length);
+            Encoding w1250 = Encoding.GetEncoding(1250);
+            Encoding utf8 = Encoding.GetEncoding("utf-8");
+            byte[] output = Encoding.Convert(utf8, w1250, utf8.GetBytes(diploma.Name));
+            diploma.Name = w1250.GetString(output);
+
+            byte[] bytes1 = new byte[diploma.LastName.Length * sizeof(char)];
+            System.Buffer.BlockCopy(diploma.LastName.ToArray(), 0, bytes, 0, bytes.Length);
+            Encoding w12501 = Encoding.GetEncoding(1250);
+            Encoding utf81 = Encoding.GetEncoding("utf-8");
+            byte[] output1 = Encoding.Convert(utf81, w12501, utf81.GetBytes(diploma.LastName));
+            diploma.LastName = w1250.GetString(output1);*/
+
+
             var stream = new MemoryStream();
             var writer = new PdfWriter(stream);
             var pdf = new PdfDocument(writer);
             //Fonts
-            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, "Cp1250", true);
-            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD, "Cp1250", true);
+            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, "Cp1251", true);
+            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD, "Cp1251", true);
             //Text Generic
             Text rector = new Text($"{diploma.RectorsName} {diploma.RectorsLastName} \nRektorius \nRector").SetFont(times_new_roman);
             Text dateofissueLT = new Text($"Išdavimo data:           {diploma.DateOfIssue.ToString("yyyy/MM/dd")}").SetFont(times_new_roman);
@@ -69,8 +85,15 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             Text afterdegreepart = new Text("laipsnis").SetFont(times_new_roman);
             Text studiesdirectionpart = new Text($"Studijų kryptis - {diploma.Studiesdirection.ToUpper()}").SetFont(times_new_roman);
             //Text Eng
-            Text degreeENG = new Text($"BACHELORS DEGREE OF {diploma.Degree.ToUpper()} ").SetFont(times_new_roman);
-            Text studiesdirectionENG = new Text($"IN {diploma.Studiesdirection.ToUpper()} ").SetFont(times_new_roman);
+            Text identitypartENG = new Text($" (personal number/code {diploma.IdentityNumber})").SetFont(times_new_roman);
+            //Text degreeENG = new Text($"BACHELORS DEGREE OF {diploma.Degree.ToUpper()} ").SetFont(times_new_roman);
+            //Text studiesdirectionENG = new Text($"IN {diploma.Studiesdirection.ToUpper()} ").SetFont(times_new_roman);
+            Text degreeENG = new Text($"BACHELORS DEGREE OF INFORMATICS ENGINEERING ").SetFont(times_new_roman);
+            Text studiesdirectionENG = new Text($"IN INFORMATICS ENGINEERING ").SetFont(times_new_roman);
+            Text partBeforeprogrammeENG = new Text($"in {diploma.DateOfIssue.Year} completed bachelors study programme ").SetFont(times_new_roman);
+            Text programmepartENG = new Text($"INFORMATION TECHNOLOGIES").SetFont(times_new_roman_bold);
+            Text programmerGovermentIDCodeENG = new Text($"(state code {diploma.StudiesProgrammeGovermentCode} )").SetFont(times_new_roman);
+            Text beforedegreepartENG = new Text("and has been awarded").SetFont(times_new_roman);
             //PDF construct
             PageSize pageSize = PageSize.A4.Rotate();
             var document = new Document(pdf, pageSize);
@@ -79,8 +102,9 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             //document.Add(new Paragraph(diploma.LastName).SetFont(times_new_roman).SetFontSize(50).SetTextAlignment(TextAlignment.CENTER));
             //document.Add(new Paragraph($"{diploma.Name.ToUpper()} {diploma.LastName.ToUpper()} (asmens kodas {diploma.IdentityNumber})").SetFont(times_new_roman).SetFontSize(16).SetTextAlignment(TextAlignment.CENTER));
             //Text spacing (fix it later)
-            document.Add(new Paragraph("\n \n \n \n").SetFont(times_new_roman).SetFontSize(50).SetTextAlignment(TextAlignment.CENTER).SetMultipliedLeading(1.0f));
-            document.Add(new Paragraph("\n").SetFont(times_new_roman).SetFontSize(25).SetTextAlignment(TextAlignment.CENTER).SetMultipliedLeading(1.0f));
+            document.Add(new Paragraph("\n \n \n").SetFont(times_new_roman).SetFontSize(50).SetTextAlignment(TextAlignment.CENTER).SetMultipliedLeading(1.0f));
+            document.Add(new Paragraph("\n \n").SetFont(times_new_roman).SetFontSize(25).SetTextAlignment(TextAlignment.CENTER).SetMultipliedLeading(1.0f));
+            document.Add(new Paragraph("\n").SetFont(times_new_roman).SetFontSize(15).SetTextAlignment(TextAlignment.CENTER).SetMultipliedLeading(1.0f));
             document.SetProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 0.5f));
             //Text construct LT part
             document.Add(new Paragraph().Add(namepart).Add(identitypart).SetTextAlignment(TextAlignment.CENTER));
@@ -90,9 +114,9 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             document.Add(new Paragraph().Add(studiesdirectionpart).SetTextAlignment(TextAlignment.CENTER));
             document.Add(new Paragraph("\n").SetTextAlignment(TextAlignment.CENTER));
             //Text construct ENG part
-            document.Add(new Paragraph().Add(namepart).Add(identitypart).SetTextAlignment(TextAlignment.CENTER));
-            document.Add(new Paragraph().Add(partBeforeprogramme).Add(programmepart).Add(programmerGovermentIDCode).SetTextAlignment(TextAlignment.CENTER));
-            document.Add(new Paragraph().Add(beforedegreepart).SetTextAlignment(TextAlignment.CENTER));
+            document.Add(new Paragraph().Add(namepart).Add(identitypartENG).SetTextAlignment(TextAlignment.CENTER));
+            document.Add(new Paragraph().Add(partBeforeprogrammeENG).Add(programmepartENG).Add(programmerGovermentIDCodeENG).SetTextAlignment(TextAlignment.CENTER));
+            document.Add(new Paragraph().Add(beforedegreepartENG).SetTextAlignment(TextAlignment.CENTER));
             document.Add(new Paragraph().Add(degreeENG).SetTextAlignment(TextAlignment.CENTER));
             document.Add(new Paragraph().Add(studiesdirectionENG).SetTextAlignment(TextAlignment.CENTER));
             //Rector part
@@ -115,6 +139,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             table.AddCell(new Paragraph(diploma.DateOfIssue.ToString("yyyy/MM/dd")).SetTextAlignment(TextAlignment.LEFT));
             table.AddCell(new Paragraph("Date of sssue:").SetTextAlignment(TextAlignment.LEFT));
             table.AddCell(new Paragraph(diploma.DateOfIssue.ToString("dd/MMMM/yyyy")).SetTextAlignment(TextAlignment.LEFT));
+            table.AddCell(new Paragraph("Code in system:").SetTextAlignment(TextAlignment.LEFT));
+            table.AddCell(new Paragraph(diploma.quickSearch.ToString()).SetTextAlignment(TextAlignment.LEFT));
             document.Add(table);
             document.Close();
             return stream;

@@ -3,6 +3,7 @@
 @using Nethereum.Metamask.Blazor.Server.DAL;
 @using Nethereum.Metamask.Blazor.Server.Classes;
 @using System.IO;
+@using System.Threading;
 @inject DiplomaService objDiplomaService;
 @inject PDFService pdfService;
 @inject Microsoft.JSInterop.IJSRuntime JS
@@ -38,7 +39,7 @@ else
                 <td>@dip.Studiesdirection</td>
                 <td>@dip.Hash</td>
 
-                @if (@dip.ComfirmationCount == -1)
+                @if (@dip.ComfirmationCount == -1 || @dip.ComfirmationCount == null)
                 {
                     <td>Pending</td>
                 }
@@ -67,7 +68,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         objDiploma = await Task.Run(() => objDiplomaService.GetAllDiplomas(1));
-        await CheckStatuses();
+        CheckStatuses();
 
 
     }
@@ -75,32 +76,37 @@ else
 
     protected async Task CheckStatuses()
     {
-        //List<string> txnList = new List<string>();
-        Dictionary<string, long> txndict = new Dictionary<string, long>();
-        EthereumLib ethlib = new EthereumLib();
-        foreach (var item in objDiploma)
+        while (true)
         {
-            if (!txndict.ContainsKey(item.transactionHash))
+            //List<string> txnList = new List<string>();
+            Dictionary<string, long> txndict = new Dictionary<string, long>();
+            EthereumLib ethlib = new EthereumLib();
+            foreach (var item in objDiploma)
             {
-                txndict.Add(item.transactionHash, 0);
-            }
-        }
-        txndict = await ethlib.GetConfirmations(txndict);
-        List<Diploma_model> tmpObjDiploma = new List<Diploma_model>();
-        foreach (var diploma in objDiploma)
-        {
-            foreach (var txn in txndict)
-            {
-                if (diploma.transactionHash == txn.Key)
+                if (!txndict.ContainsKey(item.transactionHash))
                 {
-                    diploma.ComfirmationCount = (int)txn.Value;
-                    tmpObjDiploma.Add(diploma);
+                    txndict.Add(item.transactionHash, 0);
                 }
             }
+            txndict = await ethlib.GetConfirmations(txndict);
+            List<Diploma_model> tmpObjDiploma = new List<Diploma_model>();
+            foreach (var diploma in objDiploma)
+            {
+                foreach (var txn in txndict)
+                {
+                    if (diploma.transactionHash == txn.Key)
+                    {
+                        diploma.ComfirmationCount = (int)txn.Value;
+                        tmpObjDiploma.Add(diploma);
+                    }
+                }
+            }
+            objDiploma = tmpObjDiploma;
+            objDiplomaService.UpdateDiplomas(objDiploma);
+            StateHasChanged();
+            //Check for break
+            Thread.Sleep(500);
         }
-        objDiploma = tmpObjDiploma;
-        //Check for break
-
     }
 
     protected async Task DeleteAllDiplomas()

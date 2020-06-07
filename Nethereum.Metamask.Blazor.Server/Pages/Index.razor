@@ -1,7 +1,4 @@
 ﻿@page "/"
-@inject IJSRuntime jsRuntime;
-@inject MetamaskService metamaskService;
-@inject MetamaskInterceptor metamaskInterceptor;
 @using Nethereum.Web3;
 @using Nethereum.Hex.HexTypes;
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
@@ -11,6 +8,10 @@
 @inject DiplomaService objDiplomaService;
 @inject PDFService pdfService;
 @inject Microsoft.JSInterop.IJSRuntime JS
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime;
+@inject MetamaskService metamaskService;
+@inject MetamaskInterceptor metamaskInterceptor;
 <br />
 Available Metamask : @MetamaskAvailable
 <br />
@@ -24,7 +25,7 @@ Selected Account: @SelectedAccount
 <br />
 @BlockHash
 <br />
-<button @onclick="@TransferEtherAsync">Transfer Ether</button> 
+<button @onclick="@TransferEtherAsync">Transfer Ether</button>
 <br>
 <button class="btn-primary" @onclick="@DownloadPreMadePDF">Download premade PDF</button>
 <br />
@@ -42,6 +43,7 @@ Selected Account: @SelectedAccount
     protected override async Task OnAfterRenderAsync(bool firstTime)
     {
         MetamaskAvailable = await metamaskService.CheckMetamaskAvailability();
+        NavigationManager.NavigateTo("Diploma");
     }
 
     protected async Task EnableEthereumAsync()
@@ -68,13 +70,13 @@ Selected Account: @SelectedAccount
         //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
         //MemoryStream pdfOutput = pdf.GeneratePDF(diploma);
         Diploma_model d = new Diploma_model();
-        d.Degree = "IT Degree";
-        d.IdentityNumber = 395487214;
-        d.LastName = "Kučinskas";
-        d.Name = "Arnas";
+        d.Degree = "INFORMATIKOS INŽINERIJOS BAKALAURO";
+        d.IdentityNumber = 39500000000;
+        d.LastName = "ĄČĘĖĮŠŲŪ(";
+        d.Name = "John";
         d.StudiesProgramme = "Informacinės technologijos";
-        d.Studiesdirection = "IT inžinerija";
-        Tuple<string, String> tuple =  pdf.CreatePDF(d);
+        d.Studiesdirection = "INFORMATIKOS INŽINERIJA";
+        Tuple<string, String> tuple = pdf.CreatePDF(d);
         byte[] pdfbytes = Convert.FromBase64String(tuple.Item2);
         MemoryStream stream = new MemoryStream(pdfbytes);
         JS.SaveAs("test.pdf", stream.ToArray());

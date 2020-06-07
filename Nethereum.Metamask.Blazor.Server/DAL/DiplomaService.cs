@@ -49,14 +49,6 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
         {
             //Default value
             objDimploma.Status = 0; // Waiting for verification 
-
-            //Create PDF and get its hash
-            PDF pdf = new PDF();
-            Tuple<string, String> diplomaInfo = pdf.CreatePDF(objDimploma);
-            objDimploma.Hash = diplomaInfo.Item1;
-            PdfInfo pdfInfo = new PdfInfo();
-            pdfInfo.diploma = objDimploma;
-            pdfInfo.pdfBase64Code = diplomaInfo.Item2;
             bool notUniqueQuickSearch = true;
             while (notUniqueQuickSearch)
             {
@@ -68,6 +60,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
                 }
                 objDimploma.quickSearch = quickSearch;
             }
+
+            //Create PDF and get its hash
+            PDF pdf = new PDF();
+            Tuple<string, String> diplomaInfo = pdf.CreatePDF(objDimploma);
+            objDimploma.Hash = diplomaInfo.Item1;
+            PdfInfo pdfInfo = new PdfInfo();
+            pdfInfo.diploma = objDimploma;
+            pdfInfo.pdfBase64Code = diplomaInfo.Item2;
+           
             //Check forduplicates
             //
             _db.Diploma.Add(objDimploma);
@@ -112,6 +113,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             {
                 item.transactionHash = _transactionHash;
                 item.Status = status;
+                _db.Diploma.Update(item);
+            }
+            _db.SaveChanges();
+            return "Update succesfully";
+        }
+        public string UpdateDiplomas(List<Diploma_model> objDiploma)
+        {
+            foreach (var item in objDiploma)
+            {
                 _db.Diploma.Update(item);
             }
             _db.SaveChanges();

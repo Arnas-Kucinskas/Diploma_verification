@@ -16,6 +16,7 @@ namespace Nethereum.Metamask.Blazor.Server.DB_Models
         public  int diplomaID { get; set; }
         public String pdfBase64Code { get; set; }
         //public string quickSearch { get;}
+        public string searchCode { get; set; }
 
         [IgnoreDataMember]
         public virtual Diploma_model diploma { get; set; }
