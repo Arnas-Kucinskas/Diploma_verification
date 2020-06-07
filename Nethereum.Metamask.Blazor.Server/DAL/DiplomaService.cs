@@ -18,6 +18,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             _db = db;
         }
 
+        public Diploma_model GetDiplomaBySearchID(string searchString)
+        {
+            var list = _db.Diploma.Where(s => s.quickSearch == searchString).ToList();
+            if (list.Count == 1)
+            {
+                return list[0];
+            }
+            return null;
+        }
         public Diploma_model GetDiplomaByHash(string hash)
         {
             var list = _db.Diploma.Where(s => s.Hash == hash).ToList();

@@ -3,7 +3,10 @@
 @using Nethereum.Metamask.Blazor.Server.Classes;
 @using Nethereum.Metamask.Blazor.Server.DB_Models;
 @using Nethereum.Metamask.Blazor.Server.DAL;
+@using System.IO;
 @inject DiplomaService objDiplomaService;
+@inject PDFService pdfService;
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 <h1>Diploma verification</h1>
 
@@ -13,13 +16,10 @@
 <table class="table">
     <thead>
         <tr>
-            <form>
-                <th>
-                    <label for="Name" class="control-label"></label>
-                    Enter given ID <input form="Name" class="form-control" @bind="@diplomaUserID"  />
-                
-                </th>
-            </form>
+            <th>
+                <label for="Name" class="control-label"></label>
+                Enter given ID <input form="Name" class="form-control" @bind="@diplomaUserID" @bind:event="oninput" @onkeyup="e => SearchWithID(e)" tabindex="0" />
+            </th>
             <th>OR</th>
             <th>
                 Choose a file <br />
@@ -39,39 +39,39 @@
     {
         @if (hashExists)
         {<table>
-             <tbody>
-                 <tr>
-                     <td><b>Diploma status:</b></td>
-                     <td>
-                         @if (confirmations)
-                         {
-                             <span style="color:green"><b>✔</b></span> @verificationText
-                         }
-                         else
-                         {
-                             <span style="color:gray"><b>✔</b></span> @verificationText
-                         }
-                     </td>
-                 </tr>
-                 <tr>
-                     <td><b>Date of verification:</b></td>
-                     <td>
-                         <span style="color:green"><b>✔</b></span> @verificationDate.ToString("   yyyy-MM-dd HH:mm");
-                     </td>
-                 </tr>
-                 <tr>
-                     <td><b>Diploma hash code:</b></td>
-                     <td>
-                         <span style="color:green"><b>✔</b></span> @hash
-                     </td>
-                 </tr>
-                 <tr>
-                     <td><b>Link to transaction:</b></td>
-                     <td>
-                         <a class="nav-link" href="@linkToExplorer">@linkToExplorer</a>
-                     </td>
-                 </tr>
-             </tbody>
+                <tbody>
+                    <tr>
+                        <td><b>Diploma status:</b></td>
+                        <td>
+                            @if (confirmations)
+                            {
+                                <span style="color:green"><b>✔</b></span> @verificationText
+                            }
+                            else
+                            {
+                                <span style="color:gray"><b>✔</b></span> @verificationText
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Date of verification:</b></td>
+                        <td>
+                            <span style="color:green"><b>✔</b></span> @verificationDate.ToString("   yyyy-MM-dd HH:mm");
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Diploma hash code:</b></td>
+                        <td>
+                            <span style="color:green"><b>✔</b></span> @hash
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Link to transaction:</b></td>
+                        <td>
+                            <a class="nav-link" href="@linkToExplorer">@linkToExplorer</a>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         }
         else
@@ -96,7 +96,7 @@
 @code {
     int status = 0;
     string linkToExplorer;
-    string diplomaUserID;
+    string diplomaUserID = "";
     string verificationText;
     string hash;
     bool hashExists = false;
@@ -104,9 +104,20 @@
     //int blockConfirmations;
     DateTime verificationDate;
 
-    async Task SearchWithID()
+    async Task SearchWithID(KeyboardEventArgs e)
     {
-        Console.WriteLine("Success");
+        if (diplomaUserID.Length == 10 && e.Code == "Enter")
+        {
+            Diploma_model diploma = objDiplomaService.GetDiplomaBySearchID(diplomaUserID);
+            if (diploma != null)
+            {
+                MemoryStream pdfOutput = pdfService.GetPDFForDownload(diploma);
+                string fileName = diploma.Name + "_" + diploma.LastName + "_" + diploma.IdentityNumber + ".pdf";
+                await JS.SaveAs(fileName, pdfOutput.ToArray());
+                diplomaUserID = "";
+            }
+            await FillData(diploma);
+        }
     }
     async Task HandleSelection(IFileListEntry[] files)
     {
@@ -124,7 +135,8 @@
 
             //Get diploma based on hash
             Diploma_model diploma = objDiplomaService.GetDiplomaByHash(hash);
-            if (diploma != null)
+            await FillData(diploma);
+            /*if (diploma != null)
             {
                 EthereumLib ethereumLib = new EthereumLib();
                 Tuple<bool, DateTime> txnExistnanceAndTimecheck = await ethereumLib.DoesHashExistInTxn(diploma);
@@ -162,7 +174,51 @@
                 hashExists = false;
                 verificationText = "Diploma is not verified";
             }
-            status = 2;
+            status = 2;*/
         }
+    }
+
+    async Task FillData(Diploma_model diploma)
+    {
+        if (diploma != null)
+        {
+            EthereumLib ethereumLib = new EthereumLib();
+            Tuple<bool, DateTime> txnExistnanceAndTimecheck = await ethereumLib.DoesHashExistInTxn(diploma);
+            hashExists = txnExistnanceAndTimecheck.Item1;
+            if (txnExistnanceAndTimecheck.Item1)
+            {
+                Dictionary<string, long> txndict = new Dictionary<string, long>();
+                txndict.Add(diploma.transactionHash, 0);
+                txndict = await ethereumLib.GetConfirmations(txndict);
+                if (txndict[diploma.transactionHash] > 12)
+                {
+                    verificationText = "Verified";
+                    confirmations = true;
+                }
+                else
+                {
+                    verificationText = $"Diploma is soon to be verified. Block confirmation count: {txndict[diploma.transactionHash]}/12";
+                    confirmations = false;
+                }
+                linkToExplorer = $"https://ropsten.etherscan.io/tx/{diploma.transactionHash}";
+                verificationDate = txnExistnanceAndTimecheck.Item2;
+                //blockConfirmations = diploma.ComfirmationCount;
+                hash = diploma.Hash;
+            }
+            else
+            {
+                verificationText = "Diploma is not verified";
+            }
+
+
+            //linkToExplorer = "file:\\\\DESKTOP-6QJ1MGC\\Share\\PDF";
+
+        }
+        else
+        {
+            hashExists = false;
+            verificationText = "Diploma is not verified";
+        }
+        status = 2;
     }
 }

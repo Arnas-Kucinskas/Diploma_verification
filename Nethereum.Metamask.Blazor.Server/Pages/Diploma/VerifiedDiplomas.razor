@@ -142,7 +142,7 @@ else
         PDF pdf = new PDF();
         //download pdf
         MemoryStream pdfOutput = pdfService.GetPDFForDownload(diploma);
-        string fileName = diploma.Name + "_" + diploma.LastName + "_" + diploma.SB_nr + ".pdf";
+        string fileName = diploma.Name + "_" + diploma.LastName + "_" + diploma.IdentityNumber + ".pdf";
         JS.SaveAs(fileName, pdfOutput.ToArray());
     }
 }
