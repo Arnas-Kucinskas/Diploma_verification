@@ -68,8 +68,8 @@ namespace Nethereum.Metamask.Blazor.Server.Classes
             var writer = new PdfWriter(stream);
             var pdf = new PdfDocument(writer);
             //Fonts
-            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, "Cp1251", true);
-            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD, "Cp1251", true);
+            PdfFont times_new_roman = PdfFontFactory.CreateFont(StandardFonts.TIMES_ROMAN, iText.IO.Font.PdfEncodings.CP1257, true);
+            PdfFont times_new_roman_bold = PdfFontFactory.CreateFont(StandardFonts.TIMES_BOLD, iText.IO.Font.PdfEncodings.CP1257, true);
             //Text Generic
             Text rector = new Text($"{diploma.RectorsName} {diploma.RectorsLastName} \nRektorius \nRector").SetFont(times_new_roman);
             Text dateofissueLT = new Text($"Išdavimo data:           {diploma.DateOfIssue.ToString("yyyy/MM/dd")}").SetFont(times_new_roman);

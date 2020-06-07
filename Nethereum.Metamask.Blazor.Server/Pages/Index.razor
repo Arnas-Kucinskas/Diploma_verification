@@ -76,6 +76,7 @@ Selected Account: @SelectedAccount
         d.Name = "John";
         d.StudiesProgramme = "Informacinės technologijos";
         d.Studiesdirection = "INFORMATIKOS INŽINERIJA";
+        d.quickSearch = "lalalalala";
         Tuple<string, String> tuple = pdf.CreatePDF(d);
         byte[] pdfbytes = Convert.FromBase64String(tuple.Item2);
         MemoryStream stream = new MemoryStream(pdfbytes);
