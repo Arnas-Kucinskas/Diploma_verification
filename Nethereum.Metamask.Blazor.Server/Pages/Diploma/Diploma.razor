@@ -77,6 +77,8 @@ else
 
     protected async Task ImportDocuments()
     {
+        if (!(objDiploma.Count > 5))
+        {
         var ImportedObj = File.ReadAllLines("D:\\pdf\\import.csv").Skip(1);
         List<Diploma_model> importedDiplomas = new List<Diploma_model>();
         foreach (var item in ImportedObj)
@@ -100,6 +102,8 @@ else
             objDiplomaService.Create(item);
         }
         await OnInitializedAsync();
+        }
+
     }
     protected async Task DeleteAllDiplomas()
     {
@@ -128,7 +132,7 @@ else
         {
             var web3 = new Nethereum.Web3.Web3();
             web3.Client.OverridingRequestInterceptor = metamaskInterceptor;
-            web3.TransactionManager.DefaultGas = 1000000;
+            web3.TransactionManager.DefaultGas = 900000;
             //TO DO
             //create a function to check how much GAS is required.
             SmartContract smartContract = new SmartContract();

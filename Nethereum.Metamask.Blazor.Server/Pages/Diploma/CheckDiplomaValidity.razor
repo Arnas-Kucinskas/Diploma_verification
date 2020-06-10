@@ -106,7 +106,7 @@
 
     async Task SearchWithID(KeyboardEventArgs e)
     {
-        if (diplomaUserID.Length == 10 && e.Code == "Enter")
+        if (e.Code == "Enter")
         {
             Diploma_model diploma = objDiplomaService.GetDiplomaBySearchID(diplomaUserID);
             if (diploma != null)

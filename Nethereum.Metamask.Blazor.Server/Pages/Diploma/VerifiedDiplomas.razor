@@ -76,8 +76,10 @@ else
 
     protected async Task CheckStatuses()
     {
-        while (true)
+        bool continueLoop = true;
+        while (continueLoop)
         {
+            continueLoop = false;
             //List<string> txnList = new List<string>();
             Dictionary<string, long> txndict = new Dictionary<string, long>();
             EthereumLib ethlib = new EthereumLib();
@@ -98,6 +100,10 @@ else
                     {
                         diploma.ComfirmationCount = (int)txn.Value;
                         tmpObjDiploma.Add(diploma);
+                        if (diploma.ComfirmationCount < 12)
+                        {
+                            continueLoop = true;
+                        }
                     }
                 }
             }

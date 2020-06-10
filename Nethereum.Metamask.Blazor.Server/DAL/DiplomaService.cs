@@ -77,13 +77,15 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             PdfInfo pdfInfo = new PdfInfo();
             pdfInfo.diploma = objDimploma;
             pdfInfo.pdfBase64Code = diplomaInfo.Item2;
-           
+            
             //Check forduplicates
             //
             _db.Diploma.Add(objDimploma);
             _db.SaveChanges();
             _db.pdfInfos.Add(pdfInfo);
             _db.SaveChanges();
+            //_db.Dispose();
+            pdfInfo.pdfBase64Code = null;
             return "Save Successfully";
         }
 
