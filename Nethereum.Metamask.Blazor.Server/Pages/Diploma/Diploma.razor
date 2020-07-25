@@ -79,29 +79,29 @@ else
     {
         if (!(objDiploma.Count > 5))
         {
-        var ImportedObj = File.ReadAllLines("D:\\pdf\\import.csv").Skip(1);
-        List<Diploma_model> importedDiplomas = new List<Diploma_model>();
-        foreach (var item in ImportedObj)
-        {
-            string[] values = item.Split(',');
-            Diploma_model diploma = new Diploma_model();
-            diploma.Name = values[0];
-            diploma.LastName = values[1];
-            diploma.IdentityNumber = Convert.ToInt64(values[2]);
-            diploma.StudiesProgramme = values[3];
-            diploma.StudiesProgrammeGovermentCode = values[4];
-            diploma.Degree = values[5];
-            diploma.Studiesdirection = values[6];
-            diploma.RegistrationNr = values[7];
-            diploma.DateOfIssue = Convert.ToDateTime(values[8]);
-            importedDiplomas.Add(diploma);
+            var ImportedObj = File.ReadAllLines("D:\\pdf\\import.csv").Skip(1);
+            List<Diploma_model> importedDiplomas = new List<Diploma_model>();
+            foreach (var item in ImportedObj)
+            {
+                string[] values = item.Split(',');
+                Diploma_model diploma = new Diploma_model();
+                diploma.Name = values[0];
+                diploma.LastName = values[1];
+                diploma.IdentityNumber = Convert.ToInt64(values[2]);
+                diploma.StudiesProgramme = values[3];
+                diploma.StudiesProgrammeGovermentCode = values[4];
+                diploma.Degree = values[5];
+                diploma.Studiesdirection = values[6];
+                diploma.RegistrationNr = values[7];
+                diploma.DateOfIssue = Convert.ToDateTime(values[8]);
+                importedDiplomas.Add(diploma);
 
-        }
-        foreach (var item in importedDiplomas)
-        {
-            objDiplomaService.Create(item);
-        }
-        await OnInitializedAsync();
+            }
+            foreach (var item in importedDiplomas)
+            {
+                objDiplomaService.Create(item);
+            }
+            await OnInitializedAsync();
         }
 
     }
@@ -132,7 +132,9 @@ else
         {
             var web3 = new Nethereum.Web3.Web3();
             web3.Client.OverridingRequestInterceptor = metamaskInterceptor;
-            web3.TransactionManager.DefaultGas = 900000;
+
+            web3.TransactionManager.DefaultGas = 90000;
+
             //TO DO
             //create a function to check how much GAS is required.
             SmartContract smartContract = new SmartContract();

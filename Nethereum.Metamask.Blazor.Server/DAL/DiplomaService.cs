@@ -85,7 +85,7 @@ namespace Nethereum.Metamask.Blazor.Server.DAL
             _db.pdfInfos.Add(pdfInfo);
             _db.SaveChanges();
             //_db.Dispose();
-            pdfInfo.pdfBase64Code = null;
+            //pdfInfo.pdfBase64Code = null;
             return "Save Successfully";
         }
 
